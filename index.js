@@ -35,7 +35,7 @@ app.get('/api/reminders', (request, response) => {
   Reminder
     .find({})
     .then(reminders => {
-      response.json(reminders)
+      response.json(reminders.map(formatReminder))
     })
 })
 
