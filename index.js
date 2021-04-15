@@ -18,48 +18,6 @@ const logger = (request, response, next) => {
 
 app.use(logger)
 
-let reminders = [
-  {
-    "name": "Buy some eggs",
-    "timestamp": "2021-11-10T13:00:00.141Z",
-    "id": 1
-  },
-  {
-    "name": "Make an omelette",
-    "timestamp": "2021-11-11T08:00:00.141Z",
-    "id": 2
-  },
-  {
-    "name": "Wash dishes",
-    "timestamp": "2021-11-11T09:00:00.000Z",
-    "id": 3
-  },
-  {
-    "name": "Buy more eggs",
-    "timestamp": "2021-11-11T13:00:00.000Z",
-    "id": 4
-  },
-  {
-    "name": "Testing",
-    "timestamp": "2021-03-15T09:19:02.652Z",
-    "id": 5
-  },
-  {
-    "name": "ewewe",
-    "timestamp": "2021-03-15T09:19:02.652Z",
-    "id": 7
-  },
-  {
-    "name": "qwqw",
-    "timestamp": "2021-03-15T09:19:02.652Z",
-    "id": 8
-  },
-  {
-    "name": "hiihi",
-    "timestamp": "2021-03-15T09:19:02.652Z",
-    "id": 9
-  }
-]
 
 const formatReminder = (reminder) => {
   return {
@@ -69,8 +27,8 @@ const formatReminder = (reminder) => {
   }
 }
 
-app.get('/', (request, response) => {
-  response.send('<h1>Reminder!</h1>')
+app.get('/api/', (request, response) => {
+  response.send('<h1>Reminders!</h1>')
 })
 
 app.get('/api/reminders', (request, response) => {
@@ -81,21 +39,16 @@ app.get('/api/reminders', (request, response) => {
     })
 })
 
-app.get('/api/reminders/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const reminder = reminders.find(r => r.id === id)
-  if (reminder) {
-    response.json(reminder)
-  } else {
-    response.status(404).end()
-  }
-})
-
 app.delete('/api/reminders/:id', (request, response) => {
-  const id = Number(request.params.id)
-  reminders = reminders.filter(r => r.id !== id)
-
-  response.status(204).end()
+  Reminder
+    .findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'reminder does not exist'})
+    })
 })
 
 app.post('/api/reminders/', (request, response) => {
@@ -107,7 +60,7 @@ app.post('/api/reminders/', (request, response) => {
   if (body.timestamp === undefined) {
     return response.status(400).json({error: 'reminder time missing'})
   }
-  if (reminders.some(r => r.name === body.name)) {
+  if (false) {
     return response.status(400).json({error: 'reminder already exists'})
   }
 
